@@ -1,0 +1,42 @@
+name: Update Subscriptions (V2ray & Clash)
+
+on:
+  schedule:
+    # Run at 00:00 Asia/Shanghai (UTC+8) -> 16:00 UTC previous day
+    - cron: '0 16 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    name: Update V2ray & Clash
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Update V2ray.txt
+        run: |
+          python tasks/UpdateV2raySubscription.py
+
+      - name: Update Clash.txt
+        run: |
+          python tasks/UpdateClashSubscription.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [[ -n $(git status --porcelain) ]]; then
+            git add V2ray.txt Clash.txt
+            git commit -m "chore: update subscriptions ($(date -u +'%Y-%m-%dT%H:%M:%SZ'))"
+            git push
+          else
+            echo "No changes to commit." 
