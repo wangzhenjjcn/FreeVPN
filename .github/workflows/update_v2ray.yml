@@ -39,4 +39,5 @@ jobs:
             git commit -m "chore: update subscriptions ($(date -u +'%Y-%m-%dT%H:%M:%SZ'))"
             git push
           else
-            echo "No changes to commit." 
+            echo "No changes to commit."
+          fi 
